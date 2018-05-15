@@ -7,16 +7,17 @@
 </template>
 
 <script>
-import navBar from "@/components/navBar.vue"
-import footerVote from "@/components/footerVote.vue"
+import navBar from "@/components/navBar.vue";
+import footerVote from "@/components/footerVote.vue";
 
 export default {
-  name: 'App',
-  components: {navBar,
-  footerVote}
-}
+  name: "App",
+  components: {
+    navBar,
+    footerVote
+  }
+};
 </script>
 
 <style>
-
 </style>
