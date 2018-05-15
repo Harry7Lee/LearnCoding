@@ -1,0 +1,48 @@
+<template>
+<div>
+<nav>
+    <div class="nav-wrapper darken blue">
+      <router-link :to="{name: 'index'}">
+      <a href="#" class="brand-logo"><i style="width: 20px;" class="material-icons">star_rate</i>Vote Everything</a>
+      </router-link>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="#"><i class="material-icons left">search</i>Search</a></li>
+        <li><a href="#"><i class="material-icons left">perm_identity</i>Login</a></li>
+      </ul>
+    </div>
+  </nav>
+  <router-link :to="{name: 'addVote'}">
+  <a id="floatAdd" class="btn-floating btn-large waves-effect waves-light red right"><i class="material-icons">add</i></a>
+  </router-link>
+</div>
+
+</template>
+
+<script>
+import db from '@/firebase/init'
+export default {
+    data(){
+        return{
+            
+        }
+    }
+}
+</script>
+
+<style>
+.nav-wrapper{
+  position: absolute;
+  top: 0px;
+}
+.brand-logo{
+  position: relative;
+  left: 10px;
+}
+
+#floatAdd{
+  position: fixed;
+  right: 20px;
+  top: 100px;
+}
+</style>
+
