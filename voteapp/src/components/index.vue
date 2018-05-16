@@ -8,8 +8,9 @@
         <h5>Vote Everything You can vote for anything you want or even better create a new poll!
 </h5>
       </blockquote>
-<h2></h2>
-<h4></h4>
+  <router-link :to="{name: 'addPoll'}">
+  <a id="floatAdd" class="btn-floating btn-large waves-effect waves-light red right"><i class="material-icons">add</i></a>
+  </router-link>
   </div>
     <div class="row">
       <div class="card" v-for="(poll, index) in polls" :key="index">

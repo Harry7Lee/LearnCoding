@@ -11,35 +11,31 @@
       </ul>
     </div>
   </nav>
-  <router-link :to="{name: 'addVote'}">
-  <a id="floatAdd" class="btn-floating btn-large waves-effect waves-light red right"><i class="material-icons">add</i></a>
-  </router-link>
+
 </div>
 
 </template>
 
 <script>
-import db from '@/firebase/init'
+import db from "@/firebase/init";
 export default {
-    data(){
-        return{
-            
-        }
-    }
-}
+  data() {
+    return {};
+  }
+};
 </script>
 
 <style>
-.nav-wrapper{
+.nav-wrapper {
   position: absolute;
   top: 0px;
 }
-.brand-logo{
+.brand-logo {
   position: relative;
   left: 10px;
 }
 
-#floatAdd{
+#floatAdd {
   position: fixed;
   right: 20px;
   top: 100px;
