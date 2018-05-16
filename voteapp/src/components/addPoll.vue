@@ -10,7 +10,7 @@
       </div>
       <div class="input-field col s6" v-for="(option, index) in options" :key="index">
         <i class="material-icons prefix">radio_button_checked</i>
-        <input id="pollOption" type="text" v-model="options[index]">
+        <input id="pollOption" type="text" v-model="options[index].optTitle">
         <i class="material-icons delBtn right" @click="delOpt(option)">clear</i>
       </div>
 
@@ -39,6 +39,19 @@
 </template>
 
 <script>
+import Vue from "vue";
+var vm = new Vue({
+  methods: {
+    checkDup(arr, title) {
+      var contains =
+        arr.filter(obj => {
+          return obj.optTitle == title;
+        }).length >= 1;
+      return contains;
+    }
+  }
+});
+
 import db from "@/firebase/init";
 import slugify from "slugify";
 export default {
@@ -55,9 +68,12 @@ export default {
   },
   methods: {
     addPoll() {
-      if (this.pollTitle && (this.another || this.options[0])) {
+      if (this.pollTitle && (this.another || this.options[0].optTitle)) {
         this.feedback = null;
-        this.options.push(this.another);
+        this.options.push({
+          optTitle: this.another,
+          optCount: 0
+        });
         this.slug = slugify(this.pollTitle, {
           replacement: "-",
           remove: /[$*_+~.()'"!\-:@]/g,
@@ -81,11 +97,14 @@ export default {
       }
     },
     addOpt() {
-      if (this.another && this.options.indexOf(this.another) == -1) {
-        this.options.push(this.another);
+      if (this.another && !vm.checkDup(this.options, this.another)) {
+        this.options.push({
+          optTitle: this.another,
+          optCount: 0
+        });
         this.another = null;
         this.feedback = null;
-      } else if (this.options.indexOf(this.another) != -1) {
+      } else if (vm.checkDup(this.options, this.another)) {
         this.feedback = "Option exists";
       } else {
         this.feedback = "Please Enter Option";
@@ -93,7 +112,7 @@ export default {
     },
     delOpt(opt) {
       this.options = this.options.filter(option => {
-        return option != opt;
+        return option.optTitle != opt.optTitle;
       });
     }
   }

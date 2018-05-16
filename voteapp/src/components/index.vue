@@ -22,7 +22,6 @@
             </div>
           </div>
         </div>
-
         <router-link :to="{name: 'addPoll'}">
           <a id="floatAdd" class="btn-floating btn-large waves-effect waves-light red right">
             <i class="material-icons">add</i>
@@ -32,7 +31,12 @@
       <div class="row">
         <div class="card" v-for="(poll, index) in polls" :key="index">
           <div class="card-image">
-            <img src="@/assets/sample-1.jpg">
+            <router-link :to="{name: 'pollDetail', params:{poll_slug:poll.slug}}">
+              <img src="@/assets/sample-1.jpg">
+            </router-link>
+            <div @click="deletePoll(poll.id)">
+              <i class="material-icons delete right">delete</i>
+            </div>
             <span class="card-title">{{poll.title}}</span>
             <router-link :to="{name: 'editPoll', params:{poll_slug: poll.slug}}">
               <a class="btn-floating halfway-fab waves-effect waves-light red" @click="editPoll">
@@ -43,7 +47,8 @@
           <div class="card-content">
             <ul>
               <li v-for="(opt, index) in poll.options" :key="index">
-                <span class="chip">{{opt}}</span>
+                <span class="chip">{{opt.optTitle}}: {{opt.optCount}}
+                </span>
               </li>
             </ul>
           </div>
@@ -56,6 +61,7 @@
 
 <script>
 import db from "@/firebase/init";
+import { bus } from "../main.js";
 export default {
   data() {
     return {
@@ -64,6 +70,12 @@ export default {
     };
   },
   created() {
+    bus.$on("searchPoll", data => {
+      console.log(data);
+      this.polls = this.polls.filter(poll => {
+        return poll.title.match(data.toString);
+      });
+    });
     db
       .collection("polls")
       .get()
@@ -75,6 +87,19 @@ export default {
           this.loading = false;
         });
       });
+  },
+  methods: {
+    deletePoll(id) {
+      db
+        .collection("polls")
+        .doc(id)
+        .delete()
+        .then(() => {
+          this.polls = this.polls.filter(filterPoll => {
+            return filterPoll.id != id;
+          });
+        });
+    }
   }
 };
 </script>
@@ -93,5 +118,12 @@ export default {
 .preloader-wrapper {
   position: relative;
   left: 45%;
+}
+.card-image .delete {
+  color: rgb(197, 17, 17);
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  cursor: pointer;
 }
 </style>

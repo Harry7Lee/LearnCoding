@@ -1,45 +1,56 @@
 <template>
-    <div class="addPoll">
-        <blockquote>
-            <h5>Edit Poll:</h5>
-            <h3 class="noMargin"> {{poll.title}}</h3>
-        </blockquote>
-        <form @submit.prevent="updatePoll">
-            <div class="input-field col s6">
-                <i class="material-icons prefix">title</i>
-                <input placeholder="Title" id="pollTitle" type="text" v-model="poll.title">
-            </div>
-            <div class="file-field input-field">
-            </div>
-            <div class="input-field col s6" v-for="(option, index) in poll.options" :key="index">
-                <i class="material-icons prefix">radio_button_checked</i>
-                <input id="pollOption" type="text" v-model="poll.options[index]">
-            </div>
+  <div class="addPoll">
+    <blockquote>
+      <h5>Edit Poll:</h5>
+      <h3 class="noMargin"> {{poll.title}}</h3>
+    </blockquote>
+    <form @submit.prevent="updatePoll">
+      <div class="input-field col s6">
+        <i class="material-icons prefix">title</i>
+        <input placeholder="Title" id="pollTitle" type="text" v-model="poll.title">
+      </div>
+      <div class="input-field col s6" v-for="(option, index) in poll.options" :key="index">
+        <i class="material-icons prefix">radio_button_checked</i>
+        <input id="pollOption" type="text" v-model="poll.options[index].optTitle">
+        <i class="material-icons delBtn right" @click="delOpt(option)">clear</i>
+      </div>
 
-            <div class="input-field col s6">
-                <i class="material-icons prefix">radio_button_checked</i>
-                <input placeholder="Option" id="pollOption" type="text" v-model="another" @keydown.tab.prevent="addOpt">
-            </div>
+      <div class="input-field col s6">
+        <i class="material-icons prefix">radio_button_checked</i>
+        <input placeholder="Option" id="pollOption" type="text" v-model="another" @keydown.tab.prevent="addOpt">
+      </div>
+      <i class="material-icons addBtn right" @click="addOpt">add</i>
+      <div class="file-field input-field">
+        <div class="btn">
+          <span>Image</span>
+          <input type="file">
+        </div>
+        <div class="file-path-wrapper">
+          <input placeholder="Upload Cover image" class="file-path validate" type="text">
+        </div>
+      </div>
 
-            <div class="file-field input-field">
-                <div class="btn">
-                    <span>Image</span>
-                    <input type="file">
-                </div>
-                <div class="file-path-wrapper">
-                    <input placeholder="Upload Cover image" class="file-path validate" type="text">
-                </div>
-            </div>
-
-            <p v-if="feedback" class="feedback">{{feedback}}</p>
-            <button id="subBtn" class="btn waves-effect waves-light" type="submit" name="action">Update
-                <i class="material-icons right">send</i>
-            </button>
-        </form>
-    </div>
+      <p v-if="feedback" class="feedback">{{feedback}}</p>
+      <button id="subBtn" class="btn waves-effect waves-light" type="submit" name="action">Update
+        <i class="material-icons right">send</i>
+      </button>
+    </form>
+  </div>
 </template>
 
 <script>
+import Vue from "vue";
+var vm = new Vue({
+  methods: {
+    checkDup(arr, title) {
+      var contains =
+        arr.filter(obj => {
+          return obj.optTitle == title;
+        }).length >= 1;
+      return contains;
+    }
+  }
+});
 import db from "@/firebase/init";
 import slugify from "slugify";
 export default {
@@ -53,9 +64,12 @@ export default {
   },
   methods: {
     updatePoll() {
-      if (this.poll.title && (this.another || this.poll.options[0])) {
+      if (this.poll.title && (this.another || this.poll.options[0].optTitle)) {
         this.feedback = null;
-        this.poll.options.push(this.another);
+        this.poll.options.push({
+          optTitle: this.another,
+          optCount: 0
+        });
         this.slug = slugify(this.poll.title, {
           replacement: "-",
           remove: /[$*_+~.()'"!\-:@]/g,
@@ -80,14 +94,23 @@ export default {
       }
     },
     addOpt() {
-      if (this.another && this.poll.options.indexOf(this.another) == -1) {
-        this.poll.options.push(this.another);
+      if (this.another && !vm.checkDup(this.poll.options, this.another)) {
+        this.poll.options.push({
+          optTitle: this.another,
+          optCount: 0
+        });
         this.another = null;
-      } else if (this.poll.options.indexOf(this.another) != -1) {
+        this.feedback = null;
+      } else if (vm.checkDup(this.poll.options, this.another)) {
         this.feedback = "Option exists";
       } else {
         this.feedback = "Please Enter Option";
       }
+    },
+    delOpt(opt) {
+      this.poll.options = this.poll.options.filter(option => {
+        return option.optTitle != opt.optTitle;
+      });
     }
   },
   created() {
@@ -113,7 +136,20 @@ export default {
 .addPoll blockquote {
   margin-bottom: 30px;
 }
+.addBtn {
+  position: relative;
+  top: -65px;
+  cursor: pointer;
+}
 
+.delBtn {
+  position: relative;
+  top: -45px;
+  cursor: pointer;
+}
+.input-field {
+  height: 63px;
+}
 #subBtn {
   position: relative;
   left: 380px;
