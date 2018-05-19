@@ -46,12 +46,12 @@ export default {
   },
   methods: {
     submitVote() {
-      let optRef = db
+      var optRef = db
         .collection("polls")
         .where("slug", "==", this.$route.params.poll_slug);
       optRef.get().then(snapshot => {
         snapshot.forEach(doc => {
-          let pollOpts = doc.data().options;
+          var pollOpts = doc.data().options;
           for (var i = 0; i <= pollOpts.length; i++) {
             if (pollOpts[i].optTitle === this.picked.optTitle) {
               pollOpts[i].optCount++;
