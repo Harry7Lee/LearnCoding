@@ -3,13 +3,14 @@ import firestore from "firebase/firestore";
 
 // Initialize Firebase
 var config = {
-  apiKey: "AIzaSyDKdVwsgwz9BjQ6TGHwLdEmr-GTECuAEj4",
-  authDomain: "ninja-chat-fa347.firebaseapp.com",
-  databaseURL: "https://ninja-chat-fa347.firebaseio.com",
-  projectId: "ninja-chat-fa347",
-  storageBucket: "ninja-chat-fa347.appspot.com",
-  messagingSenderId: "8327310237"
+  apiKey: "AIzaSyBw3evFR6plZBJ8j6jSQ7TgvB7L4PrZD68",
+  authDomain: "geo-c88a2.firebaseapp.com",
+  databaseURL: "https://geo-c88a2.firebaseio.com",
+  projectId: "geo-c88a2",
+  storageBucket: "geo-c88a2.appspot.com",
+  messagingSenderId: "167765331261"
 };
+
 const firebaseApp = firebase.initializeApp(config);
 firebaseApp.firestore().settings({ timestampsInSnapshots: true });
 
