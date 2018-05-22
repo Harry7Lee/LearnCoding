@@ -8,7 +8,6 @@
           <h5>Vote Everything You can vote for anything you want or even better create a new poll!
           </h5>
         </blockquote>
-
         <div v-if="loading" class="preloader-wrapper big active">
           <div class="spinner-layer spinner-blue">
             <div class="circle-clipper left">
@@ -39,7 +38,7 @@
             </div>
             <span class="card-title">{{poll.title}}</span>
             <router-link :to="{name: 'editPoll', params:{poll_slug: poll.slug}}">
-              <a class="btn-floating halfway-fab waves-effect waves-light red" @click="editPoll">
+              <a class="btn-floating halfway-fab waves-effect waves-light red">
                 <i class="material-icons">edit</i>
               </a>
             </router-link>
@@ -62,6 +61,7 @@
 <script>
 import db from "@/firebase/init";
 import { bus } from "../main.js";
+
 export default {
   data() {
     return {

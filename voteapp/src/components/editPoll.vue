@@ -1,5 +1,5 @@
 <template>
-  <div class="addPoll">
+  <div v-if="poll" class="addPoll">
     <blockquote>
       <h5>Edit Poll:</h5>
       <h3 class="noMargin"> {{poll.title}}</h3>

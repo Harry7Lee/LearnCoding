@@ -9,9 +9,11 @@
 <script>
 import navBar from "@/components/navBar.vue";
 import footerVote from "@/components/footerVote.vue";
-
 export default {
   name: "App",
+  data() {
+    return {};
+  },
   components: {
     navBar,
     footerVote
