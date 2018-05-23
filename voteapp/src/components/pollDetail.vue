@@ -5,7 +5,7 @@
     </blockquote>
     <div class="container left fixedBox">
       <img src="@/assets/sample-1.jpg" alt="">
-      <div @click.prevent='showChart' class="chart">
+      <div class="chart" ref="chart">
         <chart></chart>
       </div>
     </div>
@@ -31,44 +31,30 @@
 import db from "@/firebase/init";
 import chart from "@/components/chart.vue";
 import { bus } from "../main.js";
-import Vue from "vue";
-var vm = new Vue({
-  methods: {
-    showChart() {
-      bus.$emit("showChart", this.poll);
-    }
-  }
-});
 export default {
-  computed:{
-    products(){
-    return this.$store.state.products;
-  },saleProducts(){
-    return this.$store.getters.saleProducts;
-  }},
   name: "pollDetail",
   data() {
     return {
       poll: null,
-      picked: null,
-      vm
+      picked: null
     };
   },
   components: { chart },
   created() {
-    let ref = db.collection("polls");
-    let optRef = ref.where("slug", "==", this.$route.params.poll_slug);
-    optRef.get().then(snapshot => {
-      snapshot.forEach(doc => {
-        this.poll = doc.data();
-        this.poll.id = doc.id;
+    let optRef = db
+      .collection("polls")
+      .where("slug", "==", this.$route.params.poll_slug);
+    optRef
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          this.poll = doc.data();
+          this.poll.id = doc.id;
+        });
+      })
+      .then(() => {
+        this.showChart();
       });
-    });
-  },
-  mounted() {
-    console.log("12");
-    console.log(this.products)
-    console.log(this.saleProducts)
   },
   methods: {
     submitVote() {
@@ -87,36 +73,9 @@ export default {
         });
       this.$router.push({ name: "index" });
     },
-    showChart() {
+    showChart: function() {
       bus.$emit("showChart", this.poll);
-    },
-
-    reductPrice(){
-      this.$store.commit('reducePrice');
     }
-    //need to learn state management to know how to share data between components!!!!!!!!!!!!
-
-    // submitVote() {
-    //   var optRef = db
-    //     .collection("polls")
-    //     .where("slug", "==", this.$route.params.poll_slug);
-    //   optRef.get().then(snapshot => {
-    //     snapshot.forEach(doc => {
-    //       var pollOpts = doc.data().options;
-    //       console.log(pollOpts, optRef);
-    //       for (var i = 0; i <= pollOpts.length; i++) {
-    //         if (pollOpts[i].optTitle === this.picked.optTitle) {
-    //           pollOpts[i].optCount++;
-    //           // optRef.set({
-    //           //   options: pollOpts
-    //           // });
-    //           console.log(pollOpts[i].optCount);
-    //           // return (var pickedOpt = pollOpts[i]);
-    //         }
-    //       }
-    //     });
-    //   });
-    // }
   }
 };
 </script>

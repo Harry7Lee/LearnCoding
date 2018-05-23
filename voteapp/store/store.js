@@ -1,30 +1,31 @@
-import Vue from 'vue'
-import Vuex from 'Vuex'
-import db from "@/firebase/init";
-Vue.use(Vuex)
+import Vue from "vue";
+import Vuex from "vuex";
+import db from "../src/firebase/init";
+Vue.use(Vuex);
 
 export const store = new Vuex.Store({
-    state: {
-        products: [
-            { name: 'Banana Skin', price: 20 }
-        ]
-    },
-    getters: {
-        saleProducts: state => {
-            var saleProducts = state.products.map(product => {
-                return {
-                    name: product.name + "discount",
-                    price: product.price * 0.75 + "75% OFF"
-                }
-            })
-            return saleProducts;
-        }
-    },
-    mutations: {
-        reductPrcie: state => {
-            state.products.forEach(product => {
-                product.price -= 1
-            })
-        }
+  state: {
+    loadedFirebase: {}
+  },
+  getters: {
+    loadedFirebase: state => {
+      return state.loadedFirebase;
     }
-})
+  },
+  mutations: {
+    loadFirebase: state => {
+      db
+        .collection("polls")
+        .get()
+        .then(snapshot => {
+          console.log(snapshot);
+          return snapshot;
+        });
+    }
+  },
+  actions: {
+    loadFirebase: context => {
+      context.commit("loadFirebase");
+    }
+  }
+});
