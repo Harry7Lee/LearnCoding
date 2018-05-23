@@ -40,6 +40,12 @@ var vm = new Vue({
   }
 });
 export default {
+  computed:{
+    products(){
+    return this.$store.state.products;
+  },saleProducts(){
+    return this.$store.getters.saleProducts;
+  }},
   name: "pollDetail",
   data() {
     return {
@@ -61,6 +67,8 @@ export default {
   },
   mounted() {
     console.log("12");
+    console.log(this.products)
+    console.log(this.saleProducts)
   },
   methods: {
     submitVote() {
@@ -81,6 +89,10 @@ export default {
     },
     showChart() {
       bus.$emit("showChart", this.poll);
+    },
+
+    reductPrice(){
+      this.$store.commit('reducePrice');
     }
     //need to learn state management to know how to share data between components!!!!!!!!!!!!
 
