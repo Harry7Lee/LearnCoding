@@ -5,9 +5,9 @@
     </blockquote>
     <div class="container left fixedBox">
       <img src="@/assets/sample-1.jpg" alt="">
-      <div class="chart" ref="chart">
-        <chart></chart>
-      </div>
+    </div>
+    <div class="chart">
+      <chart></chart>
     </div>
 
     <form class="optList" @submit.prevent="submitVote">
@@ -20,10 +20,12 @@
           </span>
         </label>
       </p>
+
       <button id="subBtn" class="btn waves-effect waves-light" type="submit" name="action">VOTE
         <i class="material-icons right">send</i>
       </button>
     </form>
+
   </div>
 </template>
 
@@ -75,6 +77,9 @@ export default {
     },
     showChart: function() {
       bus.$emit("showChart", this.poll);
+      // stop chartjs from showing old data when hover
+      // document.getElementById("chart").innerHTML = "&nbsp";
+      // document.getElementById("chart").innerHTML = "<chart></chart>";
     }
   }
 };
@@ -82,7 +87,7 @@ export default {
 <style>
 .pollDetail blockquote {
   display: block;
-  width: 400px;
+  max-width: 800px;
   margin: 0 auto;
 }
 .container img {
@@ -103,13 +108,19 @@ export default {
   font-size: 16px;
   color: darkorange;
 }
-.pollDetail .optList {
+.pollDetail form {
+  float: left;
   position: relative;
   left: 100px;
   top: 100px;
+  margin-left: 50px;
+  max-width: 300px;
 }
 .chart {
-  max-width: 500px;
-  max-height: 500px;
+  margin-left: 50px;
+  margin-top: 40px;
+  float: left;
+  max-width: 400px;
+  max-height: 400px;
 }
 </style>
