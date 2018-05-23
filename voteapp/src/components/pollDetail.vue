@@ -1,3 +1,5 @@
+//1bb6a3a7e8d57d97f2b4ac57fc7a93b4a4e76c56
+
 <template>
   <div v-if='poll' class="pollDetail">
     <blockquote>
