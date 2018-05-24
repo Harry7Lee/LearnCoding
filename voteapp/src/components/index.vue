@@ -3,6 +3,7 @@
 // fix the chart
 // user can only edit /delete the poll created by themself
 // add image upload feature
+// share this poll
 
 <template>
   <div class="index">
