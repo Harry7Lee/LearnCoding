@@ -1,4 +1,5 @@
-//syncing gist id 5262b2cfbfd46c9a99e8a90c2c14ab48850e9b74
+ //"token": "ea41f70e11b88d12c709e0c72eea10c5b2f3bf25",
+ //gist id: 36bdcd8f3ce034922c0e818fb3706bbe
 
 <template>
   <div v-if='poll' class="pollDetail">
@@ -77,7 +78,7 @@ export default {
       this.$router.push({ name: "index" });
     },
     showChart: function() {
-        bus.$emit("showChart", this.poll);
+      bus.$emit("showChart", this.poll);
     }
   }
 };
