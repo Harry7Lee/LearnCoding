@@ -34,6 +34,7 @@
 <script>
 import db from "@/firebase/init";
 import chart from "@/components/chart.vue";
+import firebase from "firebase";
 import { bus } from "../main.js";
 export default {
   name: "pollDetail",
@@ -62,20 +63,26 @@ export default {
   },
   methods: {
     submitVote() {
-      this.poll.options.forEach(option => {
-        if (option.optTitle == this.picked.optTitle) {
-          option.optCount++;
-        }
-      });
-      db
-        .collection("polls")
-        .doc(this.poll.id)
-        .set({
-          options: this.poll.options,
-          slug: this.$route.params.poll_slug,
-          title: this.poll.title
+      let userLogged = firebase.auth().currentUser;
+      if (userLogged) {
+        this.poll.options.forEach(option => {
+          if (option.optTitle == this.picked.optTitle) {
+            option.optCount++;
+          }
         });
-      this.$router.push({ name: "index" });
+        db
+          .collection("polls")
+          .doc(this.poll.id)
+          .set({
+            options: this.poll.options,
+            slug: this.$route.params.poll_slug,
+            title: this.poll.title
+          });
+        alert("You have vote for " + this.picked.optTitle);
+        this.$router.push({ name: "index" });
+      } else {
+        this.$router.push({ name: "login" });
+      }
     },
     showChart: function() {
       bus.$emit("showChart", this.poll);

@@ -55,6 +55,7 @@
       </div>
     </div>
   </div>
+  <!-- add pagination -->
 
 </template>
 

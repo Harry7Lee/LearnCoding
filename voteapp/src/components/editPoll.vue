@@ -35,7 +35,6 @@
       <button id="subBtn" class="btn waves-effect waves-light" type="submit" name="action">Update
         <i class="material-icons right">send</i>
       </button>
-      <button @click="output"> asd</button>
     </form>
   </div>
 </template>
@@ -59,21 +58,19 @@ export default {
   name: "editPoll",
   data() {
     return {
-
       poll: null,
       feedback: null,
       another: null,
-      finalOptions:[]
+      finalOptions: []
     };
   },
   methods: {
-    output(){console.log(this.poll)},
     updatePoll() {
       if (this.poll.title && (this.another || this.poll.options[0].optTitle)) {
         this.feedback = null;
-        this.poll.options.forEach(option=>{
+        this.poll.options.forEach(option => {
           this.finalOptions.push(option);
-        })
+        });
         this.slug = slugify(this.poll.title, {
           replacement: "-",
           remove: /[ $*_+~.()'"!\-:@]/g,
@@ -93,8 +90,8 @@ export default {
           .catch(err => {
             conosle.log(err);
           });
-      } else if (this.another){
-          this.finalOptions.push({
+      } else if (this.another) {
+        this.finalOptions.push({
           optTitle: this.another,
           optCount: 0
         });
@@ -108,7 +105,7 @@ export default {
           optTitle: this.another,
           optCount: 0
         });
-         this.another = null;
+        this.another = null;
         this.feedback = null;
       } else if (vm.checkDup(this.poll.options, this.another)) {
         this.feedback = "Option exists";
@@ -137,6 +134,10 @@ export default {
 </script>
 
 <style>
+blockquote {
+  width: 800px;
+}
+
 .addPoll {
   max-width: 500px;
   margin: 20px auto;

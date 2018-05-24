@@ -16,10 +16,21 @@
             <a href="#" @click="search">
               <i class="material-icons left">search</i>Search</a>
           </li>
-          <li>
-            <a href="#">
-              <i class="material-icons left">perm_identity</i>Login</a>
+          <li v-if="!loggedUser">
+            <router-link :to="{name: 'login'}">
+              <a href="#">
+                <i class="material-icons left">perm_identity</i>Login</a>
+            </router-link>
           </li>
+          <li v-if="loggedUser">
+            <a>
+              <i class="material-icons left">perm_identity</i>{{loggedUser.email}}</a>
+
+          </li>
+          <li v-if="loggedUser">
+            <a @click.prevent="logout">Log Out</a>
+          </li>
+
         </ul>
       </div>
     </nav>
@@ -30,23 +41,43 @@
 import db from "@/firebase/init";
 import index from "@/components/index.vue";
 import { bus } from "../main.js";
+import firebase from "firebase";
 
 export default {
+  name: "navBar",
   data() {
     return {
       searchTxt: null,
-      searchOn: false
+      searchOn: false,
+      loggedUser: null
     };
   },
   methods: {
     search() {
       this.searchOn = !this.searchOn;
+    },
+    logout() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.$router.push({ name: "index" });
+        });
     }
   },
   computed: {
     searchPoll() {
       bus.$emit("searchPoll", this.searchTxt);
     }
+  },
+  created() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.loggedUser = user;
+      } else {
+        this.loggedUser = null;
+      }
+    });
   }
 };
 </script>
@@ -66,5 +97,8 @@ export default {
   right: 20px;
   top: 100px;
 }
+/* #nav-mobile {
+  width: 600px;
+} */
 </style>
 
