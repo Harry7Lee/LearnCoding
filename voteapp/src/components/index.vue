@@ -28,7 +28,7 @@
         </router-link>
       </div>
       <div class="row">
-        <div class="card" v-for="(poll, index) in polls" :key="index">
+        <div class="card" v-for="(poll, index) in orderedPoll" :key="index">
           <div class="card-image">
             <router-link :to="{name: 'pollDetail', params:{poll_slug:poll.slug}}">
               <img src="@/assets/sample-1.jpg">
@@ -69,6 +69,11 @@ export default {
       loading: true
     };
   },
+  computed: {
+  orderedPoll: function () {
+    return _.orderBy(this.polls, 'optTitle')
+  }
+},
   created() {
     bus.$on("searchPoll", data => {
       console.log(data);

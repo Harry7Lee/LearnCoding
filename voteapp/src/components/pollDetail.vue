@@ -1,4 +1,4 @@
-//1bb6a3a7e8d57d97f2b4ac57fc7a93b4a4e76c56
+//syncing gist id 5262b2cfbfd46c9a99e8a90c2c14ab48850e9b74
 
 <template>
   <div v-if='poll' class="pollDetail">
@@ -23,11 +23,10 @@
         </label>
       </p>
 
-      <button id="subBtn" class="btn waves-effect waves-light" type="submit" name="action">VOTE
+      <button id="subBtn" class="btn waves-effect waves-light left" type="submit" name="action">VOTE
         <i class="material-icons right">send</i>
       </button>
     </form>
-
   </div>
 </template>
 
@@ -78,10 +77,7 @@ export default {
       this.$router.push({ name: "index" });
     },
     showChart: function() {
-      bus.$emit("showChart", this.poll);
-      // stop chartjs from showing old data when hover
-      // document.getElementById("chart").innerHTML = "&nbsp";
-      // document.getElementById("chart").innerHTML = "<chart></chart>";
+        bus.$emit("showChart", this.poll);
     }
   }
 };

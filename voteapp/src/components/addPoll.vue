@@ -59,7 +59,7 @@ export default {
   data() {
     return {
       pollTitle: null,
-      pollOption: null,
+      finalOptions: [],
       another: null,
       options: [],
       feedback: null,
@@ -70,13 +70,17 @@ export default {
     addPoll() {
       if (this.pollTitle && (this.another || this.options[0].optTitle)) {
         this.feedback = null;
-        this.options.push({
+        this.options.forEach(option =>{
+          this.finalOptions.push(option);
+        })
+       this.finalOptions.push({
           optTitle: this.another,
           optCount: 0
-        });
+        })
+        console.log(this.finalOptions)
         this.slug = slugify(this.pollTitle, {
           replacement: "-",
-          remove: /[$*_+~.()'"!\-:@]/g,
+          remove: /[ $*_+~.()'"!\-:@]/g,
           lower: true
         });
         db
@@ -84,7 +88,7 @@ export default {
           .add({
             title: this.pollTitle,
             slug: this.slug,
-            options: this.options
+            options: this.finalOptions
           })
           .then(() => {
             this.$router.push({ name: "index" });

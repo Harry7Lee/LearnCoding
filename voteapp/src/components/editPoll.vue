@@ -20,6 +20,7 @@
         <input placeholder="Option" id="pollOption" type="text" v-model="another" @keydown.tab.prevent="addOpt">
       </div>
       <i class="material-icons addBtn right" @click="addOpt">add</i>
+
       <div class="file-field input-field">
         <div class="btn">
           <span>Image</span>
@@ -34,6 +35,7 @@
       <button id="subBtn" class="btn waves-effect waves-light" type="submit" name="action">Update
         <i class="material-icons right">send</i>
       </button>
+      <button @click="output"> asd</button>
     </form>
   </div>
 </template>
@@ -57,22 +59,24 @@ export default {
   name: "editPoll",
   data() {
     return {
+
       poll: null,
       feedback: null,
-      another: null
+      another: null,
+      finalOptions:[]
     };
   },
   methods: {
+    output(){console.log(this.poll)},
     updatePoll() {
       if (this.poll.title && (this.another || this.poll.options[0].optTitle)) {
         this.feedback = null;
-        this.poll.options.push({
-          optTitle: this.another,
-          optCount: 0
-        });
+        this.poll.options.forEach(option=>{
+          this.finalOptions.push(option);
+        })
         this.slug = slugify(this.poll.title, {
           replacement: "-",
-          remove: /[$*_+~.()'"!\-:@]/g,
+          remove: /[ $*_+~.()'"!\-:@]/g,
           lower: true
         });
         db
@@ -81,7 +85,7 @@ export default {
           .update({
             title: this.poll.title,
             slug: this.poll.slug,
-            options: this.poll.options
+            options: this.finalOptions
           })
           .then(() => {
             this.$router.push({ name: "index" });
@@ -89,6 +93,11 @@ export default {
           .catch(err => {
             conosle.log(err);
           });
+      } else if (this.another){
+          this.finalOptions.push({
+          optTitle: this.another,
+          optCount: 0
+        });
       } else {
         this.feedback = "Please enter both Title and Option";
       }
@@ -99,7 +108,7 @@ export default {
           optTitle: this.another,
           optCount: 0
         });
-        this.another = null;
+         this.another = null;
         this.feedback = null;
       } else if (vm.checkDup(this.poll.options, this.another)) {
         this.feedback = "Option exists";
