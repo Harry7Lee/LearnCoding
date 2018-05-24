@@ -1,3 +1,9 @@
+// TODO:
+// add pagination
+// fix the chart
+// user can only edit /delete the poll created by themself
+// add image upload feature
+
 <template>
   <div class="index">
     <div class="container">
