@@ -34,6 +34,7 @@
 <script>
 import db from "@/firebase/init";
 import chart from "@/components/chart.vue";
+
 import firebase from "firebase";
 import { bus } from "../main.js";
 export default {
@@ -80,8 +81,10 @@ export default {
           });
         alert("You have vote for " + this.picked.optTitle);
         this.$router.push({ name: "index" });
+        this.$router.go(0);
       } else {
         this.$router.push({ name: "login" });
+        this.$router.go(0);
       }
     },
     showChart: function() {

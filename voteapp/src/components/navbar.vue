@@ -62,6 +62,7 @@ export default {
         .signOut()
         .then(() => {
           this.$router.push({ name: "index" });
+          this.$router.go(0);
         });
     }
   },

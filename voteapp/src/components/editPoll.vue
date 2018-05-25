@@ -54,6 +54,7 @@ var vm = new Vue({
 });
 import db from "@/firebase/init";
 import slugify from "slugify";
+import firebase from "firebase";
 export default {
   name: "editPoll",
   data() {
@@ -82,7 +83,8 @@ export default {
           .update({
             title: this.poll.title,
             slug: this.poll.slug,
-            options: this.finalOptions
+            options: this.finalOptions,
+            user_id: firebase.auth().currentUser.uid
           })
           .then(() => {
             this.$router.push({ name: "index" });

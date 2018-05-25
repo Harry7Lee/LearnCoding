@@ -36,7 +36,9 @@ https://www.youtube.com/watch?v=J2Wp4_XRsWc
       <button id="subBtn" class="btn waves-effect waves-light" type="submit" name="action">Submit
         <i class="material-icons right">send</i>
       </button>
+      <button @click="addFaker">Add Faker</button>
     </form>
+
   </div>
 </template>
 
@@ -56,6 +58,7 @@ var vm = new Vue({
 
 import db from "@/firebase/init";
 import slugify from "slugify";
+import firebase from "firebase";
 export default {
   name: "addPoll",
   data() {
@@ -72,14 +75,13 @@ export default {
     addPoll() {
       if (this.pollTitle && (this.another || this.options[0].optTitle)) {
         this.feedback = null;
-        this.options.forEach(option =>{
+        this.options.forEach(option => {
           this.finalOptions.push(option);
-        })
-       this.finalOptions.push({
+        });
+        this.finalOptions.push({
           optTitle: this.another,
           optCount: 0
-        })
-        console.log(this.finalOptions)
+        });
         this.slug = slugify(this.pollTitle, {
           replacement: "-",
           remove: /[ $*_+~.()'"!\-:@]/g,
@@ -90,7 +92,8 @@ export default {
           .add({
             title: this.pollTitle,
             slug: this.slug,
-            options: this.finalOptions
+            options: this.finalOptions,
+            user_id: firebase.auth().currentUser.uid
           })
           .then(() => {
             this.$router.push({ name: "index" });
@@ -120,6 +123,26 @@ export default {
       this.options = this.options.filter(option => {
         return option.optTitle != opt.optTitle;
       });
+    },
+    addFaker() {
+      for (var i = 1; i < 30; i++) {
+        db
+          .collection("polls")
+          .add({
+            title: "fakerTitle " + i,
+            slug: i,
+            options: [
+              { optTitle: "option1", optCount: 0 },
+              { optTitle: "option2", optCount: 0 }
+            ]
+          })
+          .then(() => {
+            this.$router.push({ name: "index" });
+          })
+          .catch(err => {
+            conosle.log(err);
+          });
+      }
     }
   }
 };

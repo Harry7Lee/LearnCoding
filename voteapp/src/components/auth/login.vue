@@ -1,24 +1,24 @@
 <template>
-    <div class="login container">
-        <form>
-            <h2 class="teal-text">LOGIN / SIGNUP</h2>
-            <div class="field">
-                <label for="email">Email:</label>
-                <input type="email" name="email" v-model="email">
-            </div>
-            <div class="field">
-                <label for="password">Password:</label>
-                <input type="password" name="password" v-model="password">
-            </div>
-            <div v-if="signUp" class="field">
-                <label for="userName">UserName:</label>
-                <input type="text" name="userName" v-model="userName">
-            </div>
-            <p class="red-text">{{feedback}}</p>
-            <button v-if="!signUp" class="btn btn-large teal" @click.prevent="login">Login / SignUp</button>
-            <button v-if="signUp" class="btn btn-large teal" @click.prevent="signup">SignUp</button>
-        </form>
-    </div>
+  <div class="login container">
+    <form>
+      <h2 class="teal-text">LOGIN / SIGNUP</h2>
+      <div class="field">
+        <label for="email">Email:</label>
+        <input type="email" name="email" v-model="email">
+      </div>
+      <div class="field">
+        <label for="password">Password:</label>
+        <input type="password" name="password" v-model="password">
+      </div>
+      <div v-if="signUp" class="field">
+        <label for="userName">UserName:</label>
+        <input type="text" name="userName" v-model="userName">
+      </div>
+      <p class="red-text">{{feedback}}</p>
+      <button v-if="!signUp" class="btn btn-large teal" @click.prevent="login">Login / SignUp</button>
+      <button v-if="signUp" class="btn btn-large teal" @click.prevent="signup">SignUp</button>
+    </form>
+  </div>
 </template>
 
 <script>
@@ -45,7 +45,9 @@ export default {
             firebase
               .auth()
               .signInWithEmailAndPassword(this.email, this.password)
-              .then(this.$router.push({ name: "index" }));
+              .then(() => {
+                this.$router.push({ name: "index" });
+              });
           } else {
             this.signUp = true;
             this.feedback = "Email not detected, input username and sign up!";
@@ -64,7 +66,10 @@ export default {
             userName: this.userName
           });
         })
-        .then(this.$router.push({ name: "index" }));
+        .then(() => {
+          this.$router.go(0);
+          this.$router.push({ name: "index" });
+        });
     }
   }
 };
