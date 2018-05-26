@@ -39,7 +39,6 @@
       <button id="subBtn" class="btn waves-effect waves-light" type="submit" name="action">Submit
         <i class="material-icons right">send</i>
       </button>
-      <button @click="addFaker">Add Faker</button>
     </form>
 
   </div>
@@ -109,7 +108,8 @@ export default {
             options: this.finalOptions,
             user_id: firebase.auth().currentUser.uid,
             downloadURL: this.downloadURL,
-            fileName: this.fileName
+            fileName: this.fileName,
+            timestamp: Date.now()
           })
           .then(doc => {
             this.pollId = doc.id;
@@ -176,26 +176,6 @@ export default {
       this.options = this.options.filter(option => {
         return option.optTitle != opt.optTitle;
       });
-    },
-    addFaker() {
-      for (var i = 1; i < 30; i++) {
-        db
-          .collection("polls")
-          .add({
-            title: "fakerTitle " + i,
-            slug: i,
-            options: [
-              { optTitle: "option1", optCount: 0 },
-              { optTitle: "option2", optCount: 0 }
-            ]
-          })
-          .then(() => {
-            this.$router.push({ name: "index" });
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      }
     },
     onFilePicked(event) {
       const files = event.target.files;

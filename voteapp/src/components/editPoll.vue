@@ -101,7 +101,8 @@ export default {
             slug: this.poll.slug,
             options: this.finalOptions,
             user_id: firebase.auth().currentUser.uid,
-            downloadURL: this.downloadURL
+            downloadURL: this.downloadURL,
+            timestamp: Date.now()
           })
           .then(() => {
             this.pollId = this.poll.id;

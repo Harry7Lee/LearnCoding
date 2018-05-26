@@ -25,6 +25,8 @@
         <i class="material-icons right">send</i>
       </button>
     </form>
+    <a class="tweet btn btn-large blue" :href="tweet">
+      Share this poll</a>
   </div>
 </template>
 
@@ -39,11 +41,15 @@ export default {
     return {
       poll: null,
       picked: null,
-      downloadURL: null
+      downloadURL: null,
+      tweet: null
     };
   },
   components: { chart },
   created() {
+    this.tweet =
+      "https://twitter.com/intent/tweet?text=Share%20This%20Poll%20to%20Your%20Friend:%20http://localhost:8080/#" +
+      this.$route.path;
     let optRef = db
       .collection("polls")
       .where("slug", "==", this.$route.params.poll_slug);
@@ -72,14 +78,16 @@ export default {
         db
           .collection("polls")
           .doc(this.poll.id)
-          .set({
+          .update({
             options: this.poll.options,
             slug: this.$route.params.poll_slug,
             title: this.poll.title
+          })
+          .then(() => {
+            alert("You have vote for " + this.picked.optTitle);
+            this.$router.push({ name: "index" });
+            this.$router.go(0);
           });
-        alert("You have vote for " + this.picked.optTitle);
-        this.$router.push({ name: "index" });
-        this.$router.go(0);
       } else {
         this.$router.push({ name: "login" });
         this.$router.go(0);
@@ -129,5 +137,10 @@ export default {
   float: left;
   max-width: 400px;
   max-height: 400px;
+}
+.tweet {
+  position: absolute;
+  bottom: 400px;
+  left: 800px;
 }
 </style>

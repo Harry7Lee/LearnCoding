@@ -3,7 +3,8 @@ TODO:
 // fix the chart --- done
 // user can only edit /delete the poll created by themself --- done
 // add image upload feature -- done
-// share this poll
+// share this poll  --done
+// sort each poll by certain order --done
 
 <template>
   <div class="index">
@@ -57,6 +58,7 @@ TODO:
                 </span>
               </li>
             </ul>
+            <p class="timeStamp teal-text right">{{poll.timestamp | formatDate}}</p>
           </div>
         </div>
       </div>
@@ -87,6 +89,14 @@ TODO:
 import db from "@/firebase/init";
 import { bus } from "../main.js";
 import firebase from "firebase";
+import moment from "moment";
+import Vue from "vue";
+
+Vue.filter("formatDate", date => {
+  if (date) {
+    return moment(date).format("MMMM Do YYYY, h:mm:ss a");
+  }
+});
 
 export default {
   data() {
@@ -165,7 +175,15 @@ export default {
       this.currentPage = num;
       let start = (this.currentPage - 1) * this.pageSize;
       let end = start + this.pageSize + 1;
-      return this.polls.slice(start, end);
+      var slicedPolls = this.polls.slice(start, end);
+      var orderedPolls = slicedPolls.sort((a, b) => {
+        if (a.timeStamp < b.timeStamp) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      return orderedPolls;
     }
   }
 };
@@ -195,5 +213,8 @@ export default {
 }
 #pagination {
   margin-bottom: 60px;
+}
+.timeStamp {
+  padding: 10px;
 }
 </style>
