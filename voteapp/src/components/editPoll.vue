@@ -1,5 +1,5 @@
 <template>
-  <div v-if="poll" class="addPoll">
+  <div v-if="poll" class="editPoll">
     <blockquote>
       <h5>Edit Poll:</h5>
       <h3 class="noMargin"> {{poll.title}}</h3>
@@ -24,13 +24,18 @@
       <div class="file-field input-field">
         <div class="btn">
           <span>Image</span>
-          <input type="file">
+          <input type="file" accept="image/*" @change="onFilePicked">
         </div>
         <div class="file-path-wrapper">
           <input placeholder="Upload Cover image" class="file-path validate" type="text">
         </div>
       </div>
-
+      <div v-if="imageUrl" class="preview container">
+        <img :src="imageUrl" alt="Cover Image">
+      </div>
+      <div v-if="progress>0" class="progress">
+        <div class="determinate" v-bind:style="{ width: progress + '%' }"></div>
+      </div>
       <p v-if="feedback" class="feedback">{{feedback}}</p>
       <button id="subBtn" class="btn waves-effect waves-light" type="submit" name="action">Update
         <i class="material-icons right">send</i>
@@ -62,12 +67,23 @@ export default {
       poll: null,
       feedback: null,
       another: null,
-      finalOptions: []
+      finalOptions: [],
+      imageUrl: null,
+      image: null,
+      imageName: null,
+      downloadURL: null,
+      pollId: null,
+      progress: 0,
+      fileName: null
     };
   },
   methods: {
     updatePoll() {
-      if (this.poll.title && (this.another || this.poll.options[0].optTitle)) {
+      if (
+        this.poll.title &&
+        (this.another || this.poll.options[0].optTitle) &&
+        this.imageUrl
+      ) {
         this.feedback = null;
         this.poll.options.forEach(option => {
           this.finalOptions.push(option);
@@ -84,13 +100,45 @@ export default {
             title: this.poll.title,
             slug: this.poll.slug,
             options: this.finalOptions,
-            user_id: firebase.auth().currentUser.uid
+            user_id: firebase.auth().currentUser.uid,
+            downloadURL: this.downloadURL
           })
           .then(() => {
-            this.$router.push({ name: "index" });
+            this.pollId = this.poll.id;
+            const ext = this.imageName.slice(this.imageName.lastIndexOf("."));
+            this.fileName = this.poll.id + ext;
+            var imageRef = firebase.storage().ref();
+            var file = this.image;
+            var uploadTask = imageRef.child(this.pollId + ext).put(file);
+            uploadTask.on(
+              firebase.storage.TaskEvent.STATE_CHANGED,
+              snapshot => {
+                let progress =
+                  snapshot.bytesTransferred / snapshot.totalBytes * 100;
+                this.progress = progress;
+              },
+              err => {
+                console.log(err);
+              },
+              () => {
+                uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+                  this.downloadURL = downloadURL;
+                  db
+                    .collection("polls")
+                    .doc(this.pollId)
+                    .update({
+                      downloadURL: downloadURL,
+                      fileName: this.fileName
+                    })
+                    .then(() => {
+                      this.$router.push({ name: "index" });
+                    });
+                });
+              }
+            );
           })
           .catch(err => {
-            conosle.log(err);
+            console.log(err);
           });
       } else if (this.another) {
         this.finalOptions.push({
@@ -119,6 +167,22 @@ export default {
       this.poll.options = this.poll.options.filter(option => {
         return option.optTitle != opt.optTitle;
       });
+    },
+    onFilePicked(event) {
+      const files = event.target.files;
+      let fileName = files[0].name;
+      if (fileName.lastIndexOf(".") < 0) {
+        this.feedback = "Please upload a valid file!";
+      } else {
+        const fileReader = new FileReader();
+        fileReader.addEventListener("load", () => {
+          this.imageUrl = fileReader.result;
+        });
+        fileReader.readAsDataURL(files[0]);
+        this.feedback = null;
+        this.image = files[0];
+        this.imageName = fileName;
+      }
     }
   },
   created() {
@@ -129,6 +193,7 @@ export default {
       snapshot.forEach(doc => {
         this.poll = doc.data();
         this.poll.id = doc.id;
+        this.imageUrl = doc.data().downloadURL;
       });
     });
   }
@@ -140,12 +205,12 @@ blockquote {
   width: 800px;
 }
 
-.addPoll {
+.editPoll {
   max-width: 500px;
   margin: 20px auto;
 }
 
-.addPoll blockquote {
+.editPoll blockquote {
   margin-bottom: 30px;
 }
 .addBtn {
@@ -171,5 +236,11 @@ blockquote {
 }
 .noMargin {
   margin: 0;
+}
+
+.preview img {
+  max-width: 500px;
+  margin-top: 20px;
+  margin-left: -70px;
 }
 </style>

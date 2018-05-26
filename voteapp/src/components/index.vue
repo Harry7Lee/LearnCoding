@@ -2,7 +2,7 @@ TODO:
 // add pagination --- done
 // fix the chart --- done
 // user can only edit /delete the poll created by themself --- done
-// add image upload feature
+// add image upload feature -- done
 // share this poll
 
 <template>
@@ -38,7 +38,7 @@ TODO:
         <div class="card" v-for="(poll, index) in goPage(currentPage)" :key="index">
           <div class="card-image">
             <router-link :to="{name: 'pollDetail', params:{poll_slug:poll.slug}}">
-              <img src="@/assets/sample-1.jpg">
+              <img :src="poll.downloadURL">
             </router-link>
             <div v-if="poll.user_id === loggedUser" @click="deletePoll(poll.id)">
               <i class="material-icons delete right">delete</i>
@@ -95,7 +95,8 @@ export default {
       loading: true,
       pageSize: 9,
       pageNum: 1,
-      currentPage: 1
+      currentPage: 1,
+      downloadURL: null
     };
   },
   created() {
@@ -113,6 +114,7 @@ export default {
           poll.id = doc.id;
           this.polls.push(poll);
           this.loading = false;
+          this.downloadURL = doc.data().downloadURL;
         });
       });
   },
@@ -128,17 +130,30 @@ export default {
   },
   methods: {
     deletePoll(id) {
-      if (firebase.auth().currentUser) {
-        db
-          .collection("polls")
-          .doc(id)
-          .delete()
-          .then(() => {
-            this.polls = this.polls.filter(filterPoll => {
-              return filterPoll.id != id;
-            });
-          });
-      }
+      db
+        .collection("polls")
+        .doc(id)
+        .get()
+        .then(doc => {
+          firebase
+            .storage()
+            .ref()
+            .child(doc.data().fileName)
+            .delete();
+        })
+        .then(() => {
+          if (firebase.auth().currentUser) {
+            db
+              .collection("polls")
+              .doc(id)
+              .delete()
+              .then(doc => {
+                this.polls = this.polls.filter(filterPoll => {
+                  return filterPoll.id != id;
+                });
+              });
+          }
+        });
     },
     switchPage(num) {
       if (num <= this.pageNum && num >= 1) {

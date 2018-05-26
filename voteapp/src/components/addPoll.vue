@@ -1,5 +1,3 @@
-https://www.youtube.com/watch?v=J2Wp4_XRsWc
-
 <template>
   <div class="addPoll">
     <blockquote>
@@ -23,15 +21,20 @@ https://www.youtube.com/watch?v=J2Wp4_XRsWc
       <i class="material-icons addBtn right" @click="addOpt">add</i>
 
       <div class="file-field input-field">
-        <div class="btn">
+        <div class="btn" @change="onFilePicked">
           <span>Image</span>
-          <input type="file">
+          <input type="file" accept="image/*">
         </div>
         <div class="file-path-wrapper">
           <input placeholder="Upload Cover image" class="file-path validate" type="text">
         </div>
       </div>
-
+      <div v-if="imageUrl" class="preview container">
+        <img :src="imageUrl" alt="Cover Image">
+      </div>
+      <div v-if="progress>0" class="progress">
+        <div class="determinate" v-bind:style="{ width: progress + '%' }"></div>
+      </div>
       <p v-if="feedback" class="feedback">{{feedback}}</p>
       <button id="subBtn" class="btn waves-effect waves-light" type="submit" name="action">Submit
         <i class="material-icons right">send</i>
@@ -68,12 +71,23 @@ export default {
       another: null,
       options: [],
       feedback: null,
-      slug: null
+      slug: null,
+      imageUrl: null,
+      image: null,
+      imageName: null,
+      downloadURL: null,
+      pollId: null,
+      progress: 0,
+      fileName: null
     };
   },
   methods: {
     addPoll() {
-      if (this.pollTitle && (this.another || this.options[0].optTitle)) {
+      if (
+        this.pollTitle &&
+        (this.another || this.options[0].optTitle) &&
+        this.imageUrl
+      ) {
         this.feedback = null;
         this.options.forEach(option => {
           this.finalOptions.push(option);
@@ -93,16 +107,55 @@ export default {
             title: this.pollTitle,
             slug: this.slug,
             options: this.finalOptions,
-            user_id: firebase.auth().currentUser.uid
+            user_id: firebase.auth().currentUser.uid,
+            downloadURL: this.downloadURL,
+            fileName: this.fileName
           })
-          .then(() => {
-            this.$router.push({ name: "index" });
+          .then(doc => {
+            this.pollId = doc.id;
+            const ext = this.imageName.slice(this.imageName.lastIndexOf("."));
+            this.fileName = doc.id + ext;
+            var imageRef = firebase.storage().ref();
+            var file = this.image;
+            var uploadTask = imageRef.child(this.pollId + ext).put(file);
+            uploadTask.on(
+              firebase.storage.TaskEvent.STATE_CHANGED,
+              snapshot => {
+                let progress =
+                  snapshot.bytesTransferred / snapshot.totalBytes * 100;
+                this.progress = progress;
+              },
+              err => {
+                console.log(err);
+              },
+              () => {
+                uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+                  this.downloadURL = downloadURL;
+                  db
+                    .collection("polls")
+                    .doc(this.pollId)
+                    .update({
+                      downloadURL: downloadURL,
+                      fileName: this.fileName
+                    })
+                    .then(() => {
+                      this.$router.push({ name: "index" });
+                    });
+                });
+              }
+            );
           })
           .catch(err => {
-            conosle.log(err);
+            console.log(err);
           });
+      } else if (
+        this.pollTitle &&
+        (this.another || this.options[0].optTitle) &&
+        !this.imageUrl
+      ) {
+        this.feedback = "Please upload a cover image!";
       } else {
-        this.feedback = "Please enter both Title and Option";
+        this.feedback = "Please fill in all fields!";
       }
     },
     addOpt() {
@@ -140,10 +193,27 @@ export default {
             this.$router.push({ name: "index" });
           })
           .catch(err => {
-            conosle.log(err);
+            console.log(err);
           });
       }
-    }
+    },
+    onFilePicked(event) {
+      const files = event.target.files;
+      let fileName = files[0].name;
+      if (fileName.lastIndexOf(".") < 0) {
+        this.feedback = "Please upload a valid file!";
+      } else {
+        const fileReader = new FileReader();
+        fileReader.addEventListener("load", () => {
+          this.imageUrl = fileReader.result;
+        });
+        fileReader.readAsDataURL(files[0]);
+        this.feedback = null;
+        this.image = files[0];
+        this.imageName = fileName;
+      }
+    },
+    uploadImage() {}
   }
 };
 </script>
@@ -179,5 +249,11 @@ export default {
 }
 .input-field {
   height: 63px;
+}
+.preview img {
+  max-width: 500px;
+  margin-top: 20px;
+  margin-left: -70px;
+  margin-bottom: 30px;
 }
 </style>

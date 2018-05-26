@@ -1,13 +1,10 @@
- //"token": "ea41f70e11b88d12c709e0c72eea10c5b2f3bf25",
- //gist id: 36bdcd8f3ce034922c0e818fb3706bbe
-
 <template>
   <div v-if='poll' class="pollDetail">
     <blockquote>
       <h2>{{this.poll.title}}</h2>
     </blockquote>
     <div class="container left fixedBox">
-      <img src="@/assets/sample-1.jpg" alt="">
+      <img :src="downloadURL" alt="">
     </div>
     <div class="chart">
       <chart></chart>
@@ -34,7 +31,6 @@
 <script>
 import db from "@/firebase/init";
 import chart from "@/components/chart.vue";
-
 import firebase from "firebase";
 import { bus } from "../main.js";
 export default {
@@ -42,7 +38,8 @@ export default {
   data() {
     return {
       poll: null,
-      picked: null
+      picked: null,
+      downloadURL: null
     };
   },
   components: { chart },
@@ -56,6 +53,7 @@ export default {
         snapshot.forEach(doc => {
           this.poll = doc.data();
           this.poll.id = doc.id;
+          this.downloadURL = doc.data().downloadURL;
         });
       })
       .then(() => {
