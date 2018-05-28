@@ -24,30 +24,30 @@ export default {
         minZoom: 3,
         streetViewContorl: false
       });
-      db
-        .collection("users")
-        .get()
-        .then(users => {
-          users.docs.forEach(doc => {
-            let data = doc.data();
-            if (data.geolocation) {
-              let marker = new google.maps.Marker({
-                position: {
-                  lat: data.geolocation.lat,
-                  lng: data.geolocation.lng
-                },
-                map: map
-              });
-              //add click event to marker
-              marker.addListener("click", () => {
-                this.$router.push({
-                  name: "ViewProfile",
-                  params: { id: doc.id }
-                });
-              });
-            }
-          });
-        });
+      // db
+      //   .collection("users")
+      //   .get()
+      //   .then(users => {
+      //     users.docs.forEach(doc => {
+      //       let data = doc.data();
+      //       if (data.geolocation) {
+      //         let marker = new google.maps.Marker({
+      //           position: {
+      //             lat: data.geolocation.lat,
+      //             lng: data.geolocation.lng
+      //           },
+      //           map: map
+      //         });
+      //         //add click event to marker
+      //         marker.addListener("click", () => {
+      //           this.$router.push({
+      //             name: "ViewProfile",
+      //             params: { id: doc.id }
+      //           });
+      //         });
+      //       }
+      //     });
+      //   });
     }
   },
   mounted() {
