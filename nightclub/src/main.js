@@ -5,6 +5,7 @@ import App from "./App";
 import router from "./router";
 import firebase from "firebase";
 
+export const bus = new Vue();
 Vue.config.productionTip = false;
 //wait for firebase auth to init before creating the app
 

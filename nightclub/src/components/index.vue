@@ -20,30 +20,34 @@ https://developers.google.com/maps/documentation/javascript/examples/places-sear
 import firebase from "firebase";
 import db from "@/firebase/init";
 import axios from "axios";
+import { bus } from "../main.js";
 
 export default {
   name: "index",
   data() {
     return {
       lat: null,
-      lng: null
+      lng: null,
+      map: null,
+      place: null
     };
   },
   methods: {
     renderMap() {
       const map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: this.lat, lng: this.lng },
-        zoom: 8,
+        zoom: 15,
         maxZoom: 15,
         minZoom: 3,
         streetViewContorl: false
       });
+      this.map = map;
       var service = new google.maps.places.PlacesService(map);
       service.nearbySearch(
         {
           location: { lat: this.lat, lng: this.lng },
           radius: 500,
-          type: ["bar"]
+          type: ["club"]
         },
         this.callback
       );
@@ -59,16 +63,18 @@ export default {
     },
     callback(results, status) {
       for (var i = 0; i < results.length; i++) {
-        this.createMarker(results[i]);
+        new google.maps.Marker({
+          map: this.map,
+          position: results[i].geometry.location
+        });
       }
-    },
-    createMarker(place) {
-      var placeLoc = place.geometry.location;
-      var marker = new google.maps.Marker({
-        map: this.map,
-        position: place.geometry.location
-      });
     }
+  },
+  created() {
+    bus.$on("search", place => {
+      console.log(place);
+      this.renderMap();
+    });
   },
   mounted() {
     this.getLocation();

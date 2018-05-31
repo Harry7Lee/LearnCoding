@@ -1,12 +1,13 @@
 <template>
   <div id="app">
-  <Navbar></Navbar>
+    <Navbar></Navbar>
     <router-view/>
   </div>
 </template>
 
 <script>
 import Navbar from "@/components/Navbar";
+
 export default {
   name: "App",
   components: {
@@ -16,5 +17,4 @@ export default {
 </script>
 
 <style>
-
 </style>
