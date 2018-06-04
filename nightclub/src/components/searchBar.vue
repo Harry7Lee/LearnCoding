@@ -1,15 +1,15 @@
 <template>
-    <div id="search" class="row container z-depth-5">
-        <form @submit.prevent="search">
-            <div class="col s9 input-field validate">
-                <i class="material-icons prefix">pin_drop</i>
-                <label for="place"></label>
-                <input type="text" placeholder="Where are you at?" v-model="place">
-            </div>
-            <button class="waves-effect waves-light btn-small col s2">
-                Search</button>
-        </form>
-    </div>
+  <div id="search" class="row container z-depth-5">
+    <form @submit.prevent="search">
+      <div class="col s9 input-field validate">
+        <i class="material-icons prefix">pin_drop</i>
+        <label for="place"></label>
+        <input type="text" placeholder="Where are you at?" v-model="place">
+      </div>
+      <button class="waves-effect waves-light btn-small col s2">
+        Search</button>
+    </form>
+  </div>
 </template>
 
 <script>

@@ -39,7 +39,8 @@ export default {
         zoom: 15,
         maxZoom: 15,
         minZoom: 3,
-        streetViewContorl: false
+        streetViewContorl: false,
+        mapTypeId: "roadmap"
       });
       this.map = map;
       var service = new google.maps.places.PlacesService(map);
@@ -47,7 +48,7 @@ export default {
         {
           location: { lat: this.lat, lng: this.lng },
           radius: 500,
-          type: ["club"]
+          type: [this.place]
         },
         this.callback
       );
@@ -68,11 +69,18 @@ export default {
           position: results[i].geometry.location
         });
       }
+    },
+    clearMarkers() {
+      var markers = [];
+      markers.forEach(marker => {
+        new google.maps.Marker(null);
+      });
+      markers = [];
     }
   },
   created() {
     bus.$on("search", place => {
-      console.log(place);
+      this.place = place;
       this.renderMap();
     });
   },
