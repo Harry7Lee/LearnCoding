@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 export const store = new Vuex.Store({
   state: {
-    stocks: ["AMAZ", "AAPL", "C", "GOOGL", "MSFT"],
+    stocks: ["AMAZ", "AAPL", "C", "MSFT"],
     apiKey: "YQP8Z4ROSKNTCPP7",
     stockData: []
   },
@@ -44,22 +44,20 @@ export const store = new Vuex.Store({
           cleanData();
           var cleanData = {
             labels: labels,
-            datasets: [
-              {
-                label: response.data["Meta Data"]["2. Symbol"],
-                data: dayArr,
-                borderColor:
-                  "rgb(" +
-                  Math.floor(Math.random() * 256) +
-                  "," +
-                  Math.floor(Math.random() * 256) +
-                  "," +
-                  Math.floor(Math.random() * 256) +
-                  ")",
-                borderWidth: 2,
-                fill: false
-              }
-            ]
+            datasets: {
+              label: response.data["Meta Data"]["2. Symbol"],
+              data: dayArr,
+              borderColor:
+                "rgb(" +
+                Math.floor(Math.random() * 256) +
+                "," +
+                Math.floor(Math.random() * 256) +
+                "," +
+                Math.floor(Math.random() * 256) +
+                ")",
+              borderWidth: 2,
+              fill: false
+            }
           };
           commit("getStocks", cleanData);
         })

@@ -10,24 +10,24 @@ User Story: I can see changes in real-time when any other user adds or removes a
 
 <template>
   <div id="stock" class="container">
-    <div class="container chart"></div>
-    <div class="selection">
-      <form>
-        <label for="addStock"></label>
-        <input type="text" name="addStock" v-model="stock">
-        <button @click="addStock">ADD</button>
-        <button @click="loadStocks">Load</button>
-      </form>
-      <div v-for="(stock, index) in stocks" :key='index'>{{stock}}</div>
+    <div class="container chart">
+      <div class="selection">
+        <form>
+          <label for="addStock"></label>
+          <input type="text" name="addStock" v-model="stock">
+          <button @click="addStock">ADD</button>
+          <button @click="loadStocks">Load</button>
+        </form>
+        <div v-for="(stock, index) in stocks" :key='index'>{{stock}}</div>
+      </div>
+      <chart class="chart"></chart>
     </div>
-    <chart></chart>
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import chart from "@/components/chart";
-
 export default {
   name: "index",
   data() {
@@ -59,4 +59,10 @@ export default {
 </script>
 
 <style>
+.chart {
+  width: 1200px;
+}
+body {
+  background-color: grey;
+}
 </style>
