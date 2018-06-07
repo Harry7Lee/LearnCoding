@@ -61,21 +61,21 @@ export const store = new Vuex.Store({
           };
           commit("getStocks", cleanData);
         })
+        .then(() => {
+          console.log("Get One data from APi");
+        })
         .catch(err => {
           console.log(err);
         });
     },
     addStock({ commit, dispatch, getters }, stock) {
       getters.addedStocks.push(stock);
+      dispatch("getData", stock);
     },
     loadStocks({ commit, dispatch, getters }) {
       getters.addedStocks.forEach(stock => {
         dispatch("getData", stock);
       });
-      console.log(getters.stockData);
     }
   }
 });
-//1. User lands on this page, load all stocks already added
-//2. User adds a stock, push it to stocks array and update the chart
-//3. User removes a stock, pop it from stocks array and update the chart

@@ -47,14 +47,15 @@ export default {
   methods: {
     addStock() {
       this.$store.state.stocks.push(this.stock);
+      this.$store.dispatch("loadStocks");
     },
     loadStocks() {
       this.$store.dispatch("loadStocks");
     }
-  },
-  created() {
-    this.loadStocks();
   }
+  // created() {
+  //   this.loadStocks();
+  // }
 };
 </script>
 
