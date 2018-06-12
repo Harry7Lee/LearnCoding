@@ -2,14 +2,15 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
-
+import db from "@/firebase/init";
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
   state: {
-    stocks: ["AMAZ", "AAPL", "C", "MSFT"],
+    stocks: [],
     apiKey: "YQP8Z4ROSKNTCPP7",
-    stockData: []
+    stockData: [],
+    dataLoaded: false
   },
   getters: {
     addedStocks: state => {
@@ -22,6 +23,9 @@ export const store = new Vuex.Store({
   mutations: {
     getStocks(state, stockJson) {
       state.stockData.push(stockJson);
+    },
+    addStocks(state, stocks) {
+      state.stocks = stocks;
     }
   },
   actions: {
@@ -69,13 +73,22 @@ export const store = new Vuex.Store({
         });
     },
     addStock({ commit, dispatch, getters }, stock) {
-      getters.addedStocks.push(stock);
       dispatch("getData", stock);
     },
     loadStocks({ commit, dispatch, getters }) {
-      getters.addedStocks.forEach(stock => {
-        dispatch("getData", stock);
-      });
+      db.collection("addedStocks")
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            commit("addStocks", doc.data().Stocks);
+          });
+        })
+        .then(() => {
+          getters.addedStocks.forEach(stock => {
+            dispatch("getData", stock);
+          });
+          this.dataLoaded = true;
+        });
     }
   }
 });

@@ -86,6 +86,6 @@ export default {
 
 <style>
 #myChart {
-  background-color: #333;
+  background-color: rgb(49, 48, 48);
 }
 </style>
