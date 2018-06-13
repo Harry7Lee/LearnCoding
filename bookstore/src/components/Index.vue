@@ -47,13 +47,15 @@ export default {
   data() {
     return {
       bookList: [],
-      isLoaded: false
+      isLoaded: false,
+      showModal: false
     };
   },
   methods: {
     loadBooks() {
       db
         .collection("books")
+        .orderBy("title")
         .get()
         .then(snapshot => {
           snapshot.forEach(doc => {
