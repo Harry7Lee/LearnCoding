@@ -11,14 +11,29 @@
                     <li v-if="!user">
                         <a @click.prevent='showModal'>Sign In / Up</a>
                     </li>
-                    <router-link :to="{name: 'Settings', params:{id: userId}}">
-                        <li v-if="user">
-                            <a>{{user}}</a>
+                    <div v-if="user" class="loggedInNav">
+                        <li>
+                            {{user}}
                         </li>
-                    </router-link>
+                        <li>
+                            <router-link :to="{name: 'Mybooks', params:{id: userId}}">
+                                My Books
+                            </router-link>
+                        </li>
+                        <li>
+                            <router-link :to="{name: 'Settings', params:{id: userId}}">
+                                Settings
+                            </router-link>
+                        </li>
+                        <li>
+                            <a @click="logout">Log Out
+                            </a>
+                        </li>
+                    </div>
                 </ul>
             </div>
         </nav>
+
     </div>
 </template>
 
@@ -32,7 +47,8 @@ export default {
   props: ["userId", "user"],
   data() {
     return {
-      isModalVisible: false
+      isModalVisible: false,
+      isMenuVisible: false
     };
   },
   methods: {
@@ -41,6 +57,18 @@ export default {
     },
     closeModal() {
       this.isModalVisible = false;
+    },
+    showMenu() {
+      this.isMenuVisible = !this.isMenuVisible;
+    },
+    logout() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.$router.go(0);
+          this.$router.push({ name: "Index" });
+        });
     }
   }
 };

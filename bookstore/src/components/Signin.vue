@@ -54,7 +54,10 @@ export default {
       firebase
         .auth()
         .signInWithEmailAndPassword(this.email, this.password)
-        .then(this.$router.push({ name: "Index" }))
+        .then(() => {
+          this.close();
+          this.$router.push({ name: "Index" });
+        })
         .catch(err => {
           this.isSignUp = true;
           this.feedback =

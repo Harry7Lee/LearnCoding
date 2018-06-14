@@ -1,9 +1,5 @@
 TODO:
-User Story: I can view all books posted by every user.
-
 User Story: I can add a new book.
-
-User Story: I can update my settings to store my full name, city, and state and change password.
 
 User Story: I can propose a trade and wait for the other user to accept the trade.
 
@@ -65,27 +61,11 @@ export default {
         .then(() => {
           this.isLoaded = true;
         });
-    },
-    addBook() {
-      axios
-        .get(
-          "https://www.googleapis.com/books/v1/volumes?q=Harry+Potter+and+the+Prisoner+of+Azkaban&filter=paid-ebooks&key=AIzaSyC9X44ps3Lkjs76HRpROBd96wdjM5YM0-w"
-        )
-        .then(res => {
-          res.data.items.forEach(book => {
-            db.collection("books").add({
-              title: book.volumeInfo.title,
-              owner: "HarryLee",
-              imageUrl: book.volumeInfo.imageLinks.thumbnail,
-              author: book.volumeInfo.authors
-            });
-          });
-        });
     }
   },
   filters: {
     bookTitle: function(value) {
-      return value.slice(0, 58);
+      return value.slice(0, 50);
     }
   },
   created() {
