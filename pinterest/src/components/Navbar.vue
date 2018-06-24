@@ -16,7 +16,7 @@
                             {{user}}
                         </li>
                         <li>
-                            <router-link :to="{name: 'Mybooks', params:{id: userId}}">
+                            <router-link :to="{name: 'MyImages', params:{id: userId}}">
                                 My Images
                             </router-link>
                         </li>

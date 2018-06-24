@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Index from "@/components/Index";
-import Mybooks from "@/components/Mybooks";
+import MyImages from "@/components/MyImages";
 
 Vue.use(Router);
 
@@ -14,9 +14,9 @@ export default new Router({
       component: Index
     },
     {
-      path: "/:id/Mybooks",
-      name: "Mybooks",
-      component: Mybooks
+      path: "/:id/MyImages",
+      name: "MyImages",
+      component: MyImages
     }
   ]
 });
